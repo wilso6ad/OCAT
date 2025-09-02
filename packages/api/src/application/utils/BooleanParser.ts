@@ -1,14 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { NextFunction, Request, Response } from 'express';
 
 /**
- * Recursively test values for conversion.
- * @param  {?}  value  - String to convert
- * @return {?}  Returns the results of the conversion.
+* Recursively test values for conversion.
+* @param  {?}  value  - String to convert
+* @return {?}  Returns the results of the conversion.
 */
 function parseValue(value: any): any {
   if (value !== null) {
     if (typeof value === `string`) {
       return booleanify(value);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     } else if (value.constructor === Object) {
       return parseObject(value);
     } else if (Array.isArray(value)) {
@@ -25,9 +28,9 @@ function parseValue(value: any): any {
 }
 
 /**
- * Recursively convert object strings to boolean.
- * @param  {Object}  obj  - Object to iterate over
- * @return {Object}  Returns new object (shallow copy).
+* Recursively convert object strings to boolean.
+* @param  {Object}  obj  - Object to iterate over
+* @return {Object}  Returns new object (shallow copy).
 */
 function parseObject(obj: any): any {
   const result: any = {};
@@ -35,9 +38,11 @@ function parseObject(obj: any): any {
   let value;
 
   for (key in obj) {
-    // eslint-disable-next-line no-prototype-builtins
+    // eslint-disable-next-line no-prototype-builtins, @typescript-eslint/no-unsafe-member-access
     if (obj.hasOwnProperty(key)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       value = obj[key];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       result[key] = parseValue(value);
     }
   }
@@ -55,7 +60,7 @@ const booleanify = (val: string): boolean | string => {
 };
 
 export const BooleanParser = (req: Request, res: Response, next: NextFunction) => {
-  req.query = parseObject(req.query);
+  Object.assign(req.query, parseObject(req.query));
   req.body = parseObject(req.body);
   next();
 };

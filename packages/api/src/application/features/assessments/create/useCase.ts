@@ -10,14 +10,30 @@ export class CreateAssessmentUseCase implements IUseCase<CreateAssessmentDTO, As
   ) {}
 
   public async execute(assessmentData: CreateAssessmentDTO): Promise<Assessment> {
-    // TODO: Implement business validation logic here
-    // HINT: Validate that the score is between 0 and 5
-    // HINT: Validate that the risk level matches the score calculation
+    if (assessmentData.score < 0 || assessmentData.score > 5) {
+      throw new Error(`Assessment score must be between 0 and 5`);
+    }
+    const calculatedRiskLevel = this.calculateRiskLevel(assessmentData.score);
 
-    // TODO: Create the assessment using the repository
-    // HINT: use this.assessmentRepository.create(assessmentData)
-    return Promise.reject(new Error(`CreateAssessmentUseCase.execute() not implemented yet`));
+    if (assessmentData.riskLevel !== calculatedRiskLevel) {
+      throw new Error(`Invalid risk level. Expected ${calculatedRiskLevel} based on score ${assessmentData.score}`);
+    }
+
+    const assessment = await this.assessmentRepository.create({
+      ...assessmentData,
+      riskLevel: calculatedRiskLevel,
+    });
+
+    return assessment;
   }
 
-  // TODO: Add private helper methods for validation and risk level calculation
+  private calculateRiskLevel(score: number): string {
+    if (score >= 4) {
+      return `high`;
+    }
+    if (score >= 2) {
+      return `medium`;
+    }
+    return `low`;
+  }
 }

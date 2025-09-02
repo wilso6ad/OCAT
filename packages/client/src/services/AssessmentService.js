@@ -3,11 +3,9 @@ import Axios from '../utils/http.config';
 export class AssessmentService {
   static submit(assessment) {
     try {
-      // TODO: Choose the correct method, url, and data to send
-      // in a request to the express packages/api/src/routes/assessment.js
-      // NOTE: the http.config file automatically adds /api to the front of your url
-      return Axios.METHOD(`/some-url`, { })
-        .then((response) => response.data);
+      // POST request to /api/assessment (http.config adds /api automatically)
+      // This sends the assessment data to the Express server
+      return Axios.post(`/assessments`, assessment).then((response) => response.data);
     } catch (err) {
       throw new Error(`${err.response.statusText} - ${err.response.data.message}`);
     }
@@ -15,17 +13,19 @@ export class AssessmentService {
 
   static getList() {
     try {
-      // TODO: Choose the correct method, url, and data to send
-      // in a request to the express packages/api/src/routes/assessment.js
-      // NOTE: the http.config file automatically adds /api to the front of your url
-      return Axios.METHOD(`/some-url`, {
+      // GET request to /api/assessment/list (http.config adds /api automatically)
+      return Axios.get(`/assessments`, {
         params: {
           // TODO: Add any query parameters here for filtering, pagination, etc.
+          // For example:
+          // page: 1,
+          // limit: 50,
+          // status: 'active'
         },
       })
-        .then((response) => response.data.data.assessments);
+        .then((response) => response.data);
     } catch (err) {
       throw new Error(`${err.response.statusText} - ${err.response.data.message}`);
     }
   }
-}
+};

@@ -9,8 +9,13 @@ export class GetAssessmentListUseCase implements IUseCase<void, Assessment[]> {
   ) {}
 
   public async execute(): Promise<Assessment[]> {
-    // TODO: Implement the assessment list retrieval logic
-    // HINT: Use this.assessmentRepository.findAll(params) to get the assessments
-    return Promise.reject(new Error(`GetAssessmentListUseCase.execute() not implemented yet`));
+    try {
+      // Use the assessmentRepository.findAll() method to get all assessments
+      const assessments = await this.assessmentRepository.findAll();
+      return assessments;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : `Unknown error`;
+      throw new Error(`Failed to retrieve assessment list: ${errorMessage}`);
+    }
   }
 }
